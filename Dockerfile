@@ -2,7 +2,7 @@ FROM ruby:3.4.6-slim-bookworm AS base
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN apt-get update \
-  && apt-get install --no-install-recommends -y curl \
+  && apt-get install --no-install-recommends -y curl wget \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
@@ -43,6 +43,7 @@ RUN bundle install
 
 # Copy the application (and set permissions)
 COPY ./docker/wait-for.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 COPY --chown=postal . .
 
 # Export the version
@@ -53,10 +54,12 @@ RUN if [ "$VERSION" != "" ]; then echo $VERSION > VERSION; fi \
 
 # Set paths for when running in a container
 ENV POSTAL_CONFIG_FILE_PATH=/config/postal.yml
+ENV BIND_ADDRESS=0.0.0.0
+EXPOSE 5000 25 9090 9091
 
 # Set the CMD
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
-CMD ["postal"]
+CMD ["postal", "web-server"]
 
 # ci target - use --target=ci to skip asset compilation
 FROM base AS ci
