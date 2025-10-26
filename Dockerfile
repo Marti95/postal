@@ -54,6 +54,7 @@ RUN if [ "$VERSION" != "" ]; then echo $VERSION > VERSION; fi \
 # Set paths for when running in a container
 ENV POSTAL_CONFIG_FILE_PATH=/config/postal.yml
 ENV BIND_ADDRESS=0.0.0.0
+EXPOSE 5000
 
 # Set the CMD
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
