@@ -45,11 +45,11 @@ RUN bundle install
 COPY --chown=postal --chmod=0755 ./docker/wait-for.sh /docker-entrypoint.sh
 COPY --chown=postal . .
 
-# Export the version
-ARG VERSION
-ARG BRANCH
-RUN if [ "$VERSION" != "" ]; then echo $VERSION > VERSION; fi \
-  && if [ "$BRANCH" != "" ]; then echo $BRANCH > BRANCH; fi
+# Export the version from environment variables
+ENV POSTAL_VERSION=""
+ENV POSTAL_BRANCH=""
+RUN if [ "$POSTAL_VERSION" != "" ]; then echo $POSTAL_VERSION > VERSION; fi \
+  && if [ "$POSTAL_BRANCH" != "" ]; then echo $POSTAL_BRANCH > BRANCH; fi
 
 # Set paths for when running in a container
 ENV POSTAL_CONFIG_FILE_PATH=/config/postal.yml
