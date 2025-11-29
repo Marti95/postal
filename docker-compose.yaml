@@ -62,14 +62,6 @@ services:
       retries: 3
       start_period: 40s
 
-volumes:
-  gckokk44ckskcs4s0wgc8kk0-Config:
-    external: true
-    name: gckokk44ckskcs4s0wgc8kk0-Config
-  "gckokk44ckskcs4s0wgc8kk0-Postal Data":
-    external: true
-    name: "gckokk44ckskcs4s0wgc8kk0-Postal Data"
-
 networks:
   postal-network:
     driver: bridge
