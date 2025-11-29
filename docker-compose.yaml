@@ -15,13 +15,6 @@ services:
     volumes:
       - /opt/coolify/postal/config:/config
       - /opt/coolify/postal/data:/opt/postal/data
-    env_file:
-      - .env
-    environment:
-      - POSTAL_CONFIG_FILE_PATH=/config/postal.yml
-      - POSTAL_SIGNING_KEY_PATH=/config/signing.key
-      - BIND_ADDRESS=0.0.0.0
-      - PORT=5000
     depends_on:
       - postal-worker
     networks:
@@ -46,12 +39,6 @@ services:
     volumes:
       - /opt/coolify/postal/config:/config
       - /opt/coolify/postal/data:/opt/postal/data
-    env_file:
-      - .env
-    environment:
-      - POSTAL_CONFIG_FILE_PATH=/config/postal.yml
-      - POSTAL_SIGNING_KEY_PATH=/config/signing.key
-      - HEALTH_SERVER_BIND_ADDRESS=0.0.0.0
     networks:
       - postal-network
       - coolify
