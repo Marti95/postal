@@ -13,8 +13,8 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - gckokk44ckskcs4s0wgc8kk0-Config:/config
-      - gckokk44ckskcs4s0wgc8kk0-Postal Data:/opt/postal/data
+      - /opt/coolify/postal/config:/config
+      - /opt/coolify/postal/data:/opt/postal/data
     env_file:
       - .env
     environment:
@@ -44,8 +44,8 @@ services:
     command: ["postal", "worker"]
     restart: unless-stopped
     volumes:
-      - gckokk44ckskcs4s0wgc8kk0-Config:/config
-      - gckokk44ckskcs4s0wgc8kk0-Postal Data:/opt/postal/data
+      - /opt/coolify/postal/config:/config
+      - /opt/coolify/postal/data:/opt/postal/data
     env_file:
       - .env
     environment:
@@ -66,9 +66,9 @@ volumes:
   gckokk44ckskcs4s0wgc8kk0-Config:
     external: true
     name: gckokk44ckskcs4s0wgc8kk0-Config
-  gckokk44ckskcs4s0wgc8kk0-Postal Data:
+  "gckokk44ckskcs4s0wgc8kk0-Postal Data":
     external: true
-    name: gckokk44ckskcs4s0wgc8kk0-Postal Data
+    name: "gckokk44ckskcs4s0wgc8kk0-Postal Data"
 
 networks:
   postal-network:
