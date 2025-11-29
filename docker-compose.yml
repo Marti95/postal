@@ -1,28 +1,67 @@
-services:
-  postal:
-    image: ${POSTAL_IMAGE}
-    depends_on:
-      - mariadb
-    entrypoint: ["/docker-entrypoint.sh"]
-    volumes:
-      - "./docker/ci-config:/config"
-    environment:
-      POSTAL_SIGNING_KEY_PATH: /config/signing.key
-      MAIN_DB_HOST: mariadb
-      MAIN_DB_USERNAME: root
-      MESSAGE_DB_HOST: mariadb
-      MESSAGE_DB_USERNAME: root
-      LOGGING_ENABLED: "false"
-      RAILS_ENVIRONMENT: test
-      RAILS_LOG_ENABLED: "false"
-      WAIT_FOR_TIMEOUT: 90
-      WAIT_FOR_TARGETS: |-
-        mariadb:3306
+version: '3.8'
 
-  mariadb:
-    image: mariadb
-    restart: always
+services:
+  postal-web:
+    build:
+      context: .
+      target: full
+    image: ${POSTAL_IMAGE:-postal:latest}
+    container_name: postal-web
+    entrypoint: ["/docker-entrypoint.sh"]
+    command: ["postal", "web-server"]
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - postal-config:/config
+    env_file:
+      - .env
     environment:
-      MARIADB_DATABASE: postal
-      MARIADB_ALLOW_EMPTY_PASSWORD: 'yes'
-      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'yes'
+      - POSTAL_CONFIG_FILE_PATH=/config/postal.yml
+      - POSTAL_SIGNING_KEY_PATH=/config/signing.key
+      - BIND_ADDRESS=0.0.0.0
+      - PORT=5000
+    depends_on:
+      - postal-worker
+    networks:
+      - postal-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health", "||", "exit", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  postal-worker:
+    build:
+      context: .
+      target: full
+    image: ${POSTAL_IMAGE:-postal:latest}
+    container_name: postal-worker
+    entrypoint: ["/docker-entrypoint.sh"]
+    command: ["postal", "worker"]
+    restart: unless-stopped
+    volumes:
+      - postal-config:/config
+    env_file:
+      - .env
+    environment:
+      - POSTAL_CONFIG_FILE_PATH=/config/postal.yml
+      - POSTAL_SIGNING_KEY_PATH=/config/signing.key
+      - HEALTH_SERVER_BIND_ADDRESS=0.0.0.0
+    networks:
+      - postal-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/health", "||", "exit", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postal-config:
+    driver: local
+
+networks:
+  postal-network:
+    driver: bridge
