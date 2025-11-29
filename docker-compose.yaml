@@ -13,7 +13,6 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      # Match Coolify's volume configuration
       - gckokk44ckskcs4s0wgc8kk0-Config:/config
       - gckokk44ckskcs4s0wgc8kk0-Postal-Data:/opt/postal/data
     env_file:
@@ -27,6 +26,7 @@ services:
       - postal-worker
     networks:
       - postal-network
+      - coolify
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health", "||", "exit", "1"]
       interval: 30s
@@ -44,7 +44,6 @@ services:
     command: ["postal", "worker"]
     restart: unless-stopped
     volumes:
-      # Match Coolify's volume configuration - same volumes as web service
       - gckokk44ckskcs4s0wgc8kk0-Config:/config
       - gckokk44ckskcs4s0wgc8kk0-Postal-Data:/opt/postal/data
     env_file:
@@ -55,6 +54,7 @@ services:
       - HEALTH_SERVER_BIND_ADDRESS=0.0.0.0
     networks:
       - postal-network
+      - coolify
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9090/health", "||", "exit", "1"]
       interval: 30s
@@ -63,7 +63,6 @@ services:
       start_period: 40s
 
 volumes:
-  # Use external volumes that match Coolify's naming convention
   gckokk44ckskcs4s0wgc8kk0-Config:
     driver: local
     driver_opts:
@@ -80,3 +79,6 @@ volumes:
 networks:
   postal-network:
     driver: bridge
+  coolify:
+    external: true
+    name: coolify
