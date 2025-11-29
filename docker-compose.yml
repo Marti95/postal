@@ -25,6 +25,17 @@ services:
       - postal-worker
     networks:
       - postal-network
+    labels:
+      - "caddy_0=https://mailing.movsentry.com"
+      - "caddy_0.reverse_proxy=postal-web:5000"
+      - "caddy_0.encode=zstd gzip"
+      - "caddy_0.header=-Server"
+      - "traefik.enable=true"
+      - "traefik.http.routers.postal-web.rule=Host(`mailing.movsentry.com`)"
+      - "traefik.http.routers.postal-web.entrypoints=websecure"
+      - "traefik.http.routers.postal-web.tls.certresolver=letsencrypt"
+      - "traefik.http.services.postal-web.loadbalancer.server.port=5000"
+      - "traefik.docker.network=postal-network"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health", "||", "exit", "1"]
       interval: 30s
