@@ -14,7 +14,7 @@ services:
       - "5000:5000"
     volumes:
       - gckokk44ckskcs4s0wgc8kk0-Config:/config
-      - gckokk44ckskcs4s0wgc8kk0-Postal-Data:/opt/postal/data
+      - gckokk44ckskcs4s0wgc8kk0-Postal Data:/opt/postal/data
     env_file:
       - .env
     environment:
@@ -45,7 +45,7 @@ services:
     restart: unless-stopped
     volumes:
       - gckokk44ckskcs4s0wgc8kk0-Config:/config
-      - gckokk44ckskcs4s0wgc8kk0-Postal-Data:/opt/postal/data
+      - gckokk44ckskcs4s0wgc8kk0-Postal Data:/opt/postal/data
     env_file:
       - .env
     environment:
@@ -64,17 +64,11 @@ services:
 
 volumes:
   gckokk44ckskcs4s0wgc8kk0-Config:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /opt/coolify/postal/config
-  gckokk44ckskcs4s0wgc8kk0-Postal-Data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /opt/coolify/postal/data
+    external: true
+    name: gckokk44ckskcs4s0wgc8kk0-Config
+  gckokk44ckskcs4s0wgc8kk0-Postal Data:
+    external: true
+    name: gckokk44ckskcs4s0wgc8kk0-Postal Data
 
 networks:
   postal-network:
